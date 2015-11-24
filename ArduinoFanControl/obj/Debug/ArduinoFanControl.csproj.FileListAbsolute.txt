@@ -1,0 +1,11 @@
+C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\obj\Debug\ArduinoFanControl.ArduinoController.resources
+C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\obj\Debug\ArduinoFanControl.Properties.Resources.resources
+C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\obj\Debug\ArduinoFanControl.csproj.GenerateResource.Cache
+C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\bin\Debug\ArduinoFanControl.exe.config
+C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\bin\Debug\ArduinoFanControl.exe
+C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\bin\Debug\ArduinoFanControl.pdb
+C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\obj\Debug\ArduinoFanControl.exe
+C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\obj\Debug\ArduinoFanControl.pdb
+C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\obj\Debug\ArduinoFanControl.csprojResolveAssemblyReference.cache
+C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\bin\Debug\OpenHardwareMonitorLib.dll
+C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\obj\Debug\ArduinoFanControl.Configuration.resources
