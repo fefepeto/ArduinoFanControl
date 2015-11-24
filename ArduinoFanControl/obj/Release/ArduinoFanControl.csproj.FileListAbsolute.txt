@@ -9,3 +9,6 @@ C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFan
 C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.exe
 C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.pdb
 C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.csprojResolveAssemblyReference.cache
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\bin\Release\ArduinoFanControl.exe.config
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.exe
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.pdb

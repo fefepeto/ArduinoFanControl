@@ -33,7 +33,7 @@ namespace ArduinoFanControl
             port = p;
         }
 
-        struct fileStructure
+        public struct fileStructure
         {
             public string Name;
             public string Alias;
@@ -41,7 +41,7 @@ namespace ArduinoFanControl
             public bool log;
         };
 
-        private int searchIndex(string Name, List<fileStructure> files)
+        public int searchIndex(string Name, List<fileStructure> files)
         {
             int id = 0;
             while (files[id].Name != Name && id<files.Count) id++;
@@ -85,6 +85,7 @@ namespace ArduinoFanControl
                                 table.RowCount++;
                                 table.RowStyles[table.RowCount - 1].Height = 22;
                                 textb.Name = "Sensor" + sensors.Count.ToString();
+                                
                                 idx = searchIndex(sensor.Name, fs);
                                 if (idx < 255) textb.Text = fs[idx].Alias;
                                 else textb.Text = sensor.Name.ToString();
