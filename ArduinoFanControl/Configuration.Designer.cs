@@ -38,6 +38,7 @@
             // 
             // table
             // 
+            this.table.AutoScroll = true;
             this.table.AutoSize = true;
             this.table.ColumnCount = 3;
             this.table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 85F));
@@ -47,7 +48,9 @@
             this.table.Controls.Add(this.label2, 1, 0);
             this.table.Controls.Add(this.label3, 2, 0);
             this.table.Location = new System.Drawing.Point(13, 13);
+            this.table.MaximumSize = new System.Drawing.Size(567, 565);
             this.table.Name = "table";
+            this.table.Padding = new System.Windows.Forms.Padding(0, 0, 26, 0);
             this.table.RowCount = 1;
             this.table.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 13F));
             this.table.Size = new System.Drawing.Size(567, 13);
@@ -65,7 +68,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(484, 0);
+            this.label2.Location = new System.Drawing.Point(448, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(29, 13);
             this.label2.TabIndex = 1;
@@ -74,7 +77,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(526, 0);
+            this.label3.Location = new System.Drawing.Point(487, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(25, 13);
             this.label3.TabIndex = 2;
@@ -82,7 +85,7 @@
             // 
             // OK
             // 
-            this.OK.Location = new System.Drawing.Point(505, 512);
+            this.OK.Location = new System.Drawing.Point(505, 584);
             this.OK.Name = "OK";
             this.OK.Size = new System.Drawing.Size(75, 23);
             this.OK.TabIndex = 1;
@@ -95,7 +98,7 @@
             this.AcceptButton = this.OK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(592, 547);
+            this.ClientSize = new System.Drawing.Size(592, 619);
             this.Controls.Add(this.OK);
             this.Controls.Add(this.table);
             this.Name = "Configuration";

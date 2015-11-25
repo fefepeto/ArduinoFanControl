@@ -31,7 +31,6 @@
             this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.COM_p = new System.Windows.Forms.ComboBox();
-            this.TextR = new System.Windows.Forms.Label();
             this.Temperature = new System.Windows.Forms.GroupBox();
             this.Voltage = new System.Windows.Forms.GroupBox();
             this.LoadGB = new System.Windows.Forms.GroupBox();
@@ -60,20 +59,10 @@
             this.COM_p.TabIndex = 1;
             this.COM_p.SelectedIndexChanged += new System.EventHandler(this.COM_p_SelectedIndexChanged);
             // 
-            // TextR
-            // 
-            this.TextR.AutoSize = true;
-            this.TextR.Location = new System.Drawing.Point(13, 62);
-            this.TextR.Name = "TextR";
-            this.TextR.Size = new System.Drawing.Size(35, 13);
-            this.TextR.TabIndex = 3;
-            this.TextR.Text = "label2";
-            this.TextR.Click += new System.EventHandler(this.TextR_Click);
-            // 
             // Temperature
             // 
             this.Temperature.AutoSize = true;
-            this.Temperature.Location = new System.Drawing.Point(13, 96);
+            this.Temperature.Location = new System.Drawing.Point(12, 37);
             this.Temperature.Name = "Temperature";
             this.Temperature.Size = new System.Drawing.Size(200, 153);
             this.Temperature.TabIndex = 5;
@@ -83,7 +72,7 @@
             // Voltage
             // 
             this.Voltage.AutoSize = true;
-            this.Voltage.Location = new System.Drawing.Point(13, 255);
+            this.Voltage.Location = new System.Drawing.Point(12, 196);
             this.Voltage.Name = "Voltage";
             this.Voltage.Size = new System.Drawing.Size(200, 167);
             this.Voltage.TabIndex = 6;
@@ -93,7 +82,7 @@
             // LoadGB
             // 
             this.LoadGB.AutoSize = true;
-            this.LoadGB.Location = new System.Drawing.Point(13, 428);
+            this.LoadGB.Location = new System.Drawing.Point(12, 369);
             this.LoadGB.Name = "LoadGB";
             this.LoadGB.Size = new System.Drawing.Size(200, 134);
             this.LoadGB.TabIndex = 7;
@@ -103,7 +92,7 @@
             // Frequency
             // 
             this.Frequency.AutoSize = true;
-            this.Frequency.Location = new System.Drawing.Point(219, 96);
+            this.Frequency.Location = new System.Drawing.Point(218, 37);
             this.Frequency.Name = "Frequency";
             this.Frequency.Size = new System.Drawing.Size(200, 153);
             this.Frequency.TabIndex = 8;
@@ -113,7 +102,7 @@
             // RPM
             // 
             this.RPM.AutoSize = true;
-            this.RPM.Location = new System.Drawing.Point(219, 255);
+            this.RPM.Location = new System.Drawing.Point(218, 196);
             this.RPM.Name = "RPM";
             this.RPM.Size = new System.Drawing.Size(200, 167);
             this.RPM.TabIndex = 9;
@@ -127,7 +116,7 @@
             // Due
             // 
             this.Due.AutoSize = true;
-            this.Due.Location = new System.Drawing.Point(219, 428);
+            this.Due.Location = new System.Drawing.Point(218, 369);
             this.Due.Name = "Due";
             this.Due.Size = new System.Drawing.Size(200, 134);
             this.Due.TabIndex = 10;
@@ -158,7 +147,6 @@
             this.Controls.Add(this.LoadGB);
             this.Controls.Add(this.Voltage);
             this.Controls.Add(this.Temperature);
-            this.Controls.Add(this.TextR);
             this.Controls.Add(this.COM_p);
             this.Controls.Add(this.label1);
             this.Name = "ArduinoController";
@@ -173,7 +161,6 @@
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox COM_p;
-        private System.Windows.Forms.Label TextR;
         private System.Windows.Forms.GroupBox Temperature;
         private System.Windows.Forms.GroupBox Voltage;
         private System.Windows.Forms.GroupBox LoadGB;

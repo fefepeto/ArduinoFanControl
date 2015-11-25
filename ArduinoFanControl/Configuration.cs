@@ -21,7 +21,6 @@ namespace ArduinoFanControl
         List<CheckBox> hidden = new List<CheckBox>();
         List<CheckBox> logged = new List<CheckBox>();
         SerialPort port;
-        System.IO.FileStream config;
         System.IO.StreamWriter sw;
         System.IO.StreamReader sr;
         
@@ -41,36 +40,47 @@ namespace ArduinoFanControl
             public bool log;
         };
 
-        public int searchIndex(string Name, List<fileStructure> files)
+        public int searchIndex(string Name, List<Configuration.fileStructure> files)
         {
             int id = 0;
-            while (files[id].Name != Name && id<files.Count) id++;
+            if (files.Count > 0)
+            {
+                while (files[id].Name != Name && id < files.Count) id++;
+            }
             if (id < files.Count) return id;
             else return 255;
         }
 
         private void Configuration_Load(object sender, EventArgs e)
         {
+            RowStyle row = new RowStyle(SizeType.Absolute, 22);
+            table.RowStyles.Add(row);
+            sr = new System.IO.StreamReader("config.ini");
             int idx = 0;
             List<fileStructure> fs = new List<fileStructure>();
             string red = sr.ReadLine();
-            while (red != "")
+            while (red != null)
             {
-                fileStructure cfs;
-                string curr = red.Split('=')[0];
-                curr = curr.TrimEnd(' ');
-                cfs.Name = curr;
-                red = red.Split('=')[1].TrimStart(' ');
-                curr = red.Split(' ')[0];
-                cfs.Alias = curr;
-                cfs.hide = red.Split(' ')[1] == "true";
-                cfs.log = red.Split(' ')[2] == "true";
-                fs.Add(cfs);
+                if (red.Split('=')[0].TrimEnd(' ') == "LastUsedPort")
+                {
+                    
+                }
+                else
+                {
+                    Configuration.fileStructure cfs;
+                    string curr = red.Split('=')[0];
+                    curr = curr.TrimEnd(' ');
+                    cfs.Name = curr;
+                    red = red.Split('=')[1].TrimStart(' ');
+                    curr = red.Split(' ')[0];
+                    cfs.Alias = curr;
+                    cfs.hide = red.Split(' ')[1] == "true";
+                    cfs.log = red.Split(' ')[2] == "true";
+                    fs.Add(cfs);
+                }
+                red = sr.ReadLine();
             }
 
-            TextBox textb = new TextBox();
-            CheckBox hide = new CheckBox();
-            CheckBox log = new CheckBox();
             foreach (var hardwareItem in computer.Hardware)
             {
                 hardwareItem.Update();
@@ -79,20 +89,23 @@ namespace ArduinoFanControl
                     subHardware.Update();
                     foreach (var sensor in subHardware.Sensors)
                     {
+                        TextBox textb = new TextBox();
+                        CheckBox hide = new CheckBox();
+                        CheckBox log = new CheckBox();
+
                         switch (sensor.SensorType)
                         {
                             case SensorType.Temperature:
                                 table.RowCount++;
-                                table.RowStyles[table.RowCount - 1].Height = 22;
                                 textb.Name = "Sensor" + sensors.Count.ToString();
-                                
-                                idx = searchIndex(sensor.Name, fs);
+                                idx = searchIndex(sensor.Name + " " + sensor.SensorType.ToString(), fs);
                                 if (idx < 255) textb.Text = fs[idx].Alias;
-                                else textb.Text = sensor.Name.ToString();
+                                else textb.Text = sensor.Name + " " + sensor.SensorType.ToString();
                                 textb.AcceptsReturn = true;
                                 textb.Size = new System.Drawing.Size(100, 20);
                                 textb.Location = new Point(3, 16 + 22 * tb.Count);
                                 textb.TabIndex = table.RowCount * 3;
+                                textb.Width = 200;
                                 tb.Add(textb);
                                 table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                                 hide.Name = "SensorHide" + sensors.Count.ToString();
@@ -117,15 +130,15 @@ namespace ArduinoFanControl
                                 break;
                             case SensorType.Voltage:
                                 table.RowCount++;
-                                table.RowStyles[table.RowCount - 1].Height = 22;
                                 textb.Name = "Sensor" + sensors.Count.ToString();
-                                idx = searchIndex(sensor.Name, fs);
+                                idx = searchIndex(sensor.Name + " " + sensor.SensorType.ToString(), fs);
                                 if (idx < 255) textb.Text = fs[idx].Alias;
-                                else textb.Text = sensor.Name.ToString();
+                                else textb.Text = sensor.Name + " " + sensor.SensorType.ToString();
                                 textb.AcceptsReturn = true;
                                 textb.Size = new System.Drawing.Size(100, 20);
                                 textb.Location = new Point(3, 16 + 22 * tb.Count);
                                 textb.TabIndex = table.RowCount * 3;
+                                textb.Width = 200;
                                 tb.Add(textb);
                                 table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                                 hide.Name = "SensorHide" + sensors.Count.ToString();
@@ -150,15 +163,15 @@ namespace ArduinoFanControl
                                 break;
                             case SensorType.Load:
                                 table.RowCount++;
-                                table.RowStyles[table.RowCount - 1].Height = 22;
                                 textb.Name = "Sensor" + sensors.Count.ToString();
-                                idx = searchIndex(sensor.Name, fs);
+                                idx = searchIndex(sensor.Name + " " + sensor.SensorType.ToString(), fs);
                                 if (idx < 255) textb.Text = fs[idx].Alias;
-                                else textb.Text = sensor.Name.ToString();
+                                else textb.Text = sensor.Name + " " + sensor.SensorType.ToString();
                                 textb.AcceptsReturn = true;
                                 textb.Size = new System.Drawing.Size(100, 20);
                                 textb.Location = new Point(3, 16 + 22 * tb.Count);
                                 textb.TabIndex = table.RowCount * 3;
+                                textb.Width = 200;
                                 tb.Add(textb);
                                 table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                                 hide.Name = "SensorHide" + sensors.Count.ToString();
@@ -183,15 +196,15 @@ namespace ArduinoFanControl
                                 break;
                             case SensorType.Clock:
                                 table.RowCount++;
-                                table.RowStyles[table.RowCount - 1].Height = 22;
                                 textb.Name = "Sensor" + sensors.Count.ToString();
-                                idx = searchIndex(sensor.Name, fs);
+                                idx = searchIndex(sensor.Name + " " + sensor.SensorType.ToString(), fs);
                                 if (idx < 255) textb.Text = fs[idx].Alias;
-                                else textb.Text = sensor.Name.ToString();
+                                else textb.Text = sensor.Name + " " + sensor.SensorType.ToString();
                                 textb.AcceptsReturn = true;
                                 textb.Size = new System.Drawing.Size(100, 20);
                                 textb.Location = new Point(3, 16 + 22 * tb.Count);
                                 textb.TabIndex = table.RowCount * 3;
+                                textb.Width = 200;
                                 tb.Add(textb);
                                 table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                                 hide.Name = "SensorHide" + sensors.Count.ToString();
@@ -216,15 +229,15 @@ namespace ArduinoFanControl
                                 break;
                             case SensorType.Fan:
                                 table.RowCount++;
-                                table.RowStyles[table.RowCount - 1].Height = 22;
                                 textb.Name = "Sensor" + sensors.Count.ToString();
-                                idx = searchIndex(sensor.Name, fs);
+                                idx = searchIndex(sensor.Name + " " + sensor.SensorType.ToString(), fs);
                                 if (idx < 255) textb.Text = fs[idx].Alias;
-                                else textb.Text = sensor.Name.ToString();
+                                else textb.Text = sensor.Name + " " + sensor.SensorType.ToString();
                                 textb.AcceptsReturn = true;
                                 textb.Size = new System.Drawing.Size(100, 20);
                                 textb.Location = new Point(3, 16 + 22 * tb.Count);
                                 textb.TabIndex = table.RowCount * 3;
+                                textb.Width = 200;
                                 tb.Add(textb);
                                 table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                                 hide.Name = "SensorHide" + sensors.Count.ToString();
@@ -255,19 +268,23 @@ namespace ArduinoFanControl
 
                 foreach (var sensor in hardwareItem.Sensors)
                 {
+                    TextBox textb = new TextBox();
+                    CheckBox hide = new CheckBox();
+                    CheckBox log = new CheckBox();
+
                     switch (sensor.SensorType)
                     {
                         case SensorType.Temperature:
                             table.RowCount++;
-                            table.RowStyles[table.RowCount - 1].Height = 22;
                             textb.Name = "Sensor" + sensors.Count.ToString();
-                            idx = searchIndex(sensor.Name, fs);
+                            idx = searchIndex(sensor.Name + " " + sensor.SensorType.ToString(), fs);
                             if (idx < 255) textb.Text = fs[idx].Alias;
-                            else textb.Text = sensor.Name.ToString();
+                            else textb.Text = sensor.Name + " " + sensor.SensorType.ToString();
                             textb.AcceptsReturn = true;
                             textb.Size = new System.Drawing.Size(100, 20);
                             textb.Location = new Point(3, 16 + 22 * tb.Count);
                             textb.TabIndex = table.RowCount * 3;
+                                textb.Width = 200;
                             tb.Add(textb);
                             table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                             hide.Name = "SensorHide" + sensors.Count.ToString();
@@ -292,15 +309,15 @@ namespace ArduinoFanControl
                             break;
                         case SensorType.Voltage:
                             table.RowCount++;
-                            table.RowStyles[table.RowCount - 1].Height = 22;
                             textb.Name = "Sensor" + sensors.Count.ToString();
-                            idx = searchIndex(sensor.Name, fs);
+                            idx = searchIndex(sensor.Name + " " + sensor.SensorType.ToString(), fs);
                             if (idx < 255) textb.Text = fs[idx].Alias;
-                            else textb.Text = sensor.Name.ToString();
+                            else textb.Text = sensor.Name + " " + sensor.SensorType.ToString();
                             textb.AcceptsReturn = true;
                             textb.Size = new System.Drawing.Size(100, 20);
                             textb.Location = new Point(3, 16 + 22 * tb.Count);
                             textb.TabIndex = table.RowCount * 3;
+                                textb.Width = 200;
                             tb.Add(textb);
                             table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                             hide.Name = "SensorHide" + sensors.Count.ToString();
@@ -325,15 +342,15 @@ namespace ArduinoFanControl
                             break;
                         case SensorType.Load:
                             table.RowCount++;
-                            table.RowStyles[table.RowCount - 1].Height = 22;
                             textb.Name = "Sensor" + sensors.Count.ToString();
-                            idx = searchIndex(sensor.Name, fs);
+                            idx = searchIndex(sensor.Name + " " + sensor.SensorType.ToString(), fs);
                             if (idx < 255) textb.Text = fs[idx].Alias;
-                            else textb.Text = sensor.Name.ToString();
+                            else textb.Text = sensor.Name + " " + sensor.SensorType.ToString();
                             textb.AcceptsReturn = true;
                             textb.Size = new System.Drawing.Size(100, 20);
                             textb.Location = new Point(3, 16 + 22 * tb.Count);
                             textb.TabIndex = table.RowCount * 3;
+                                textb.Width = 200;
                             tb.Add(textb);
                             table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                             hide.Name = "SensorHide" + sensors.Count.ToString();
@@ -358,15 +375,15 @@ namespace ArduinoFanControl
                             break;
                         case SensorType.Clock:
                             table.RowCount++;
-                            table.RowStyles[table.RowCount - 1].Height = 22;
                             textb.Name = "Sensor" + sensors.Count.ToString();
-                            idx = searchIndex(sensor.Name, fs);
+                            idx = searchIndex(sensor.Name + " " + sensor.SensorType.ToString(), fs);
                             if (idx < 255) textb.Text = fs[idx].Alias;
-                            else textb.Text = sensor.Name.ToString();
+                            else textb.Text = sensor.Name + " " + sensor.SensorType.ToString();
                             textb.AcceptsReturn = true;
                             textb.Size = new System.Drawing.Size(100, 20);
                             textb.Location = new Point(3, 16 + 22 * tb.Count);
                             textb.TabIndex = table.RowCount * 3;
+                                textb.Width = 200;
                             tb.Add(textb);
                             table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                             hide.Name = "SensorHide" + sensors.Count.ToString();
@@ -391,15 +408,15 @@ namespace ArduinoFanControl
                             break;
                         case SensorType.Fan:
                             table.RowCount++;
-                            table.RowStyles[table.RowCount - 1].Height = 22;
                             textb.Name = "Sensor" + sensors.Count.ToString();
-                            idx = searchIndex(sensor.Name, fs);
+                            idx = searchIndex(sensor.Name + " " + sensor.SensorType.ToString(), fs);
                             if (idx < 255) textb.Text = fs[idx].Alias;
-                            else textb.Text = sensor.Name.ToString();
+                            else textb.Text = sensor.Name + " " + sensor.SensorType.ToString();
                             textb.AcceptsReturn = true;
                             textb.Size = new System.Drawing.Size(100, 20);
                             textb.Location = new Point(3, 16 + 22 * tb.Count);
                             textb.TabIndex = table.RowCount * 3;
+                                textb.Width = 200;
                             tb.Add(textb);
                             table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                             hide.Name = "SensorHide" + sensors.Count.ToString();
@@ -430,8 +447,11 @@ namespace ArduinoFanControl
 
             for (int i = 0; i < 4; i++)
             {
+                TextBox textb = new TextBox();
+                CheckBox hide = new CheckBox();
+                CheckBox log = new CheckBox();
+
                 table.RowCount++;
-                table.RowStyles[table.RowCount - 1].Height = 22;
                 textb.Name = "Sensor" + (sensors.Count + i + 1).ToString();
                 idx = searchIndex("DueTemperature" + (i + 1).ToString(), fs);
                 if (idx < 255) textb.Text = fs[idx].Alias;
@@ -440,6 +460,7 @@ namespace ArduinoFanControl
                 textb.Size = new System.Drawing.Size(100, 20);
                 textb.Location = new Point(3, 16 + 22 * tb.Count);
                 textb.TabIndex = table.RowCount * 3;
+                textb.Width = 200;
                 tb.Add(textb);
                 table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                 hide.Name = "SensorHide" + (sensors.Count + i + 1).ToString();
@@ -464,16 +485,20 @@ namespace ArduinoFanControl
 
             for (int i = 0; i < 6; i++)
             {
+                TextBox textb = new TextBox();
+                CheckBox hide = new CheckBox();
+                CheckBox log = new CheckBox();
+
                 table.RowCount++;
-                table.RowStyles[table.RowCount - 1].Height = 22;
                 textb.Name = "Sensor" + (sensors.Count + i + 1).ToString();
-                idx = searchIndex("DueFan" + (i + 5).ToString(), fs);
+                idx = searchIndex("DueFan" + (i + 1).ToString(), fs);
                 if (idx < 255) textb.Text = fs[idx].Alias;
-                else textb.Text = "DueFan" + (i + 5).ToString();
+                else textb.Text = "DueFan" + (i + 1).ToString();
                 textb.AcceptsReturn = true;
                 textb.Size = new System.Drawing.Size(100, 20);
                 textb.Location = new Point(3, 16 + 22 * tb.Count);
                 textb.TabIndex = table.RowCount * 3;
+                textb.Width = 200;
                 tb.Add(textb);
                 table.Controls.Add(tb[tb.Count - 1], 0, table.RowCount - 1);
                 hide.Name = "SensorHide" + (sensors.Count + i + 5).ToString();
@@ -500,7 +525,7 @@ namespace ArduinoFanControl
         private void OK_Click(object sender, EventArgs e)
         {
             sw = new System.IO.StreamWriter("config.ini");
-            sw.WriteLine("LastUsedCOM = " + port.PortName);
+            sw.WriteLine("LastUsedPort = " + port.PortName);
             int i;
             for (i = 0; i < sensors.Count; i++)
             {
