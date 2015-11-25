@@ -45,27 +45,30 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 13);
+            this.label1.Location = new System.Drawing.Point(17, 16);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(67, 13);
+            this.label1.Size = new System.Drawing.Size(89, 17);
             this.label1.TabIndex = 0;
             this.label1.Text = "Choose port:";
             // 
             // COM_p
             // 
             this.COM_p.FormattingEnabled = true;
-            this.COM_p.Location = new System.Drawing.Point(86, 10);
+            this.COM_p.Location = new System.Drawing.Point(115, 12);
+            this.COM_p.Margin = new System.Windows.Forms.Padding(4);
             this.COM_p.Name = "COM_p";
-            this.COM_p.Size = new System.Drawing.Size(94, 21);
+            this.COM_p.Size = new System.Drawing.Size(124, 24);
             this.COM_p.TabIndex = 1;
             this.COM_p.SelectedIndexChanged += new System.EventHandler(this.COM_p_SelectedIndexChanged);
             // 
             // TextR
             // 
             this.TextR.AutoSize = true;
-            this.TextR.Location = new System.Drawing.Point(13, 62);
+            this.TextR.Location = new System.Drawing.Point(17, 76);
+            this.TextR.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.TextR.Name = "TextR";
-            this.TextR.Size = new System.Drawing.Size(35, 13);
+            this.TextR.Size = new System.Drawing.Size(46, 17);
             this.TextR.TabIndex = 3;
             this.TextR.Text = "label2";
             this.TextR.Click += new System.EventHandler(this.TextR_Click);
@@ -73,9 +76,11 @@
             // Temperature
             // 
             this.Temperature.AutoSize = true;
-            this.Temperature.Location = new System.Drawing.Point(13, 96);
+            this.Temperature.Location = new System.Drawing.Point(17, 118);
+            this.Temperature.Margin = new System.Windows.Forms.Padding(4);
             this.Temperature.Name = "Temperature";
-            this.Temperature.Size = new System.Drawing.Size(200, 153);
+            this.Temperature.Padding = new System.Windows.Forms.Padding(4);
+            this.Temperature.Size = new System.Drawing.Size(267, 188);
             this.Temperature.TabIndex = 5;
             this.Temperature.TabStop = false;
             this.Temperature.Text = "Temperature";
@@ -83,9 +88,11 @@
             // Voltage
             // 
             this.Voltage.AutoSize = true;
-            this.Voltage.Location = new System.Drawing.Point(13, 255);
+            this.Voltage.Location = new System.Drawing.Point(17, 314);
+            this.Voltage.Margin = new System.Windows.Forms.Padding(4);
             this.Voltage.Name = "Voltage";
-            this.Voltage.Size = new System.Drawing.Size(200, 167);
+            this.Voltage.Padding = new System.Windows.Forms.Padding(4);
+            this.Voltage.Size = new System.Drawing.Size(267, 206);
             this.Voltage.TabIndex = 6;
             this.Voltage.TabStop = false;
             this.Voltage.Text = "Voltage";
@@ -93,9 +100,11 @@
             // LoadGB
             // 
             this.LoadGB.AutoSize = true;
-            this.LoadGB.Location = new System.Drawing.Point(13, 428);
+            this.LoadGB.Location = new System.Drawing.Point(17, 527);
+            this.LoadGB.Margin = new System.Windows.Forms.Padding(4);
             this.LoadGB.Name = "LoadGB";
-            this.LoadGB.Size = new System.Drawing.Size(200, 134);
+            this.LoadGB.Padding = new System.Windows.Forms.Padding(4);
+            this.LoadGB.Size = new System.Drawing.Size(267, 165);
             this.LoadGB.TabIndex = 7;
             this.LoadGB.TabStop = false;
             this.LoadGB.Text = "Load";
@@ -103,9 +112,11 @@
             // Frequency
             // 
             this.Frequency.AutoSize = true;
-            this.Frequency.Location = new System.Drawing.Point(219, 96);
+            this.Frequency.Location = new System.Drawing.Point(292, 118);
+            this.Frequency.Margin = new System.Windows.Forms.Padding(4);
             this.Frequency.Name = "Frequency";
-            this.Frequency.Size = new System.Drawing.Size(200, 153);
+            this.Frequency.Padding = new System.Windows.Forms.Padding(4);
+            this.Frequency.Size = new System.Drawing.Size(267, 188);
             this.Frequency.TabIndex = 8;
             this.Frequency.TabStop = false;
             this.Frequency.Text = "Frequency";
@@ -113,9 +124,11 @@
             // RPM
             // 
             this.RPM.AutoSize = true;
-            this.RPM.Location = new System.Drawing.Point(219, 255);
+            this.RPM.Location = new System.Drawing.Point(292, 314);
+            this.RPM.Margin = new System.Windows.Forms.Padding(4);
             this.RPM.Name = "RPM";
-            this.RPM.Size = new System.Drawing.Size(200, 167);
+            this.RPM.Padding = new System.Windows.Forms.Padding(4);
+            this.RPM.Size = new System.Drawing.Size(267, 206);
             this.RPM.TabIndex = 9;
             this.RPM.TabStop = false;
             this.RPM.Text = "RPM";
@@ -123,13 +136,16 @@
             // timer1
             // 
             this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // Due
             // 
             this.Due.AutoSize = true;
-            this.Due.Location = new System.Drawing.Point(219, 428);
+            this.Due.Location = new System.Drawing.Point(292, 527);
+            this.Due.Margin = new System.Windows.Forms.Padding(4);
             this.Due.Name = "Due";
-            this.Due.Size = new System.Drawing.Size(200, 134);
+            this.Due.Padding = new System.Windows.Forms.Padding(4);
+            this.Due.Size = new System.Drawing.Size(267, 165);
             this.Due.TabIndex = 10;
             this.Due.TabStop = false;
             this.Due.Text = "ArduinoDueFanController";
@@ -137,9 +153,10 @@
             // Config
             // 
             this.Config.AutoSize = true;
-            this.Config.Location = new System.Drawing.Point(340, 565);
+            this.Config.Location = new System.Drawing.Point(453, 695);
+            this.Config.Margin = new System.Windows.Forms.Padding(4);
             this.Config.Name = "Config";
-            this.Config.Size = new System.Drawing.Size(79, 23);
+            this.Config.Size = new System.Drawing.Size(105, 28);
             this.Config.TabIndex = 11;
             this.Config.Text = "Configuration";
             this.Config.UseVisualStyleBackColor = true;
@@ -147,10 +164,10 @@
             // 
             // ArduinoController
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(430, 600);
+            this.ClientSize = new System.Drawing.Size(573, 738);
             this.Controls.Add(this.Config);
             this.Controls.Add(this.Due);
             this.Controls.Add(this.RPM);
@@ -161,6 +178,7 @@
             this.Controls.Add(this.TextR);
             this.Controls.Add(this.COM_p);
             this.Controls.Add(this.label1);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "ArduinoController";
             this.Text = "ArduinoDue";
             this.Load += new System.EventHandler(this.Form1_Load);
