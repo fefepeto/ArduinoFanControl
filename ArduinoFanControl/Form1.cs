@@ -52,6 +52,21 @@ namespace ArduinoFanControl
         List<sensorData> RPMs = new List<sensorData>();
         List<DueSensors> DueSen = new List<DueSensors>();
 
+        delegate void SetTextCallback(string text, Label l);
+
+        public void SetText(string text, Label l)
+        {
+            if (l.InvokeRequired)
+            {
+                SetTextCallback d = new ArduinoFanControl.ArduinoController.SetTextCallback(SetText);
+                this.Invoke(d, new object[] { text, l });
+            }
+            else
+            {
+                l.Text = text;
+            }
+        }
+
         public int searchIndex(string Name, List<Configuration.fileStructure> files)
         {
             int id = 0;
@@ -212,6 +227,18 @@ namespace ArduinoFanControl
 
         void init()
         {
+            Temperatures.Clear();
+            Voltages.Clear();
+            Frequencies.Clear();
+            RPMs.Clear();
+            Loads.Clear();
+            DueSen.Clear();
+            Temperature.Controls.Clear();
+            Voltage.Controls.Clear();
+            Frequency.Controls.Clear();
+            RPM.Controls.Clear();
+            LoadGB.Controls.Clear();
+            Due.Controls.Clear();
             System.IO.StreamReader sr = new System.IO.StreamReader("config.ini");
             int idx = 0;
             fs = new List<Configuration.fileStructure>();
@@ -417,6 +444,7 @@ namespace ArduinoFanControl
             string[] ports = SerialPort.GetPortNames();
             foreach (string s in ports) COM_p.Items.Add(s);
             init();
+            timer1.Start();
         }
 
         private void COM_p_SelectedIndexChanged(object sender, EventArgs e)
@@ -433,28 +461,24 @@ namespace ArduinoFanControl
             serial.ReadTimeout = 500;
             serial.WriteTimeout = 500;
             if (!serial.IsOpen) serial.Open();
+            COM_p.Enabled = false;
         }
 
         void serial_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             SerialPort port = (SerialPort)sender;
-            /*int red = port.ReadChar();
-            if (char.IsLetterOrDigit((char)(red))) input = input + (char)(red);
-            if (red == 10 || red == 13) TextR.Text = input;
-            input = "";*/
             input = port.ReadLine();
-        }
-        
-        private void Config_Click(object sender, EventArgs e)
-        {
-            Configuration configwindow = new Configuration(ref thisPC, ref serial);
-            configwindow.Show();
-            configwindow.FormClosed += configwindow_FormClosed;
-        }
-
-        void configwindow_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            init();
+            string[] inp = input.Split(' ');
+            for (int i = 0; i < inp.Length; i++)
+            {
+                float current = float.Parse(inp[i]);
+                DueSensors ds = new DueSensors();
+                ds = DueSen[i];
+                ds.current = current;
+                if (current > ds.max) ds.max = current;
+                if (current < ds.min) ds.min = current;
+                DueSen[i] = ds;
+            }
         }
 
         void label_Click(object sender, EventArgs e)
@@ -525,7 +549,154 @@ namespace ArduinoFanControl
                 default:
                     break;
             }
+        }
 
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            foreach (Label l in Temperature.Controls)
+            {
+                int id = 0;
+                while (id < Temperatures.Count && Temperatures[id].label != l) id++;
+                Temperatures[id].sensor.Hardware.Update();
+                switch (Temperatures[id].disp)
+                {
+                    case display.Current:
+                        SetText(l.Text.Split('=')[0] + "= " + Temperatures[id].sensor.Value.ToString(), l);
+                        break;
+                    case display.Max:
+                       SetText(l.Text.Split('=')[0] + "= " + Temperatures[id].sensor.Max.ToString(), l);
+                        break;
+                    case display.Min:
+                        SetText(l.Text.Split('=')[0] + "= " + Temperatures[id].sensor.Min.ToString(), l);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            foreach (Label l in Voltage.Controls)
+            {
+                int id = 0;
+                while (Voltages[id].label != l) id++;
+                Voltages[id].sensor.Hardware.Update();
+                switch (Voltages[id].disp)
+                {
+                    case display.Current:
+                        SetText(l.Text.Split('=')[0] + "= " + Voltages[id].sensor.Value.ToString(), l);
+                        break;
+                    case display.Max:
+                        SetText(l.Text.Split('=')[0] + "= " + Voltages[id].sensor.Max.ToString(), l);
+                        break;
+                    case display.Min:
+                        SetText(l.Text.Split('=')[0] + "= " + Voltages[id].sensor.Min.ToString(), l);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            foreach (Label l in  LoadGB.Controls)
+            {
+                int id = 0;
+                while (Loads[id].label != l) id++;
+                Loads[id].sensor.Hardware.Update();
+                switch (Loads[id].disp)
+                {
+                    case display.Current:
+                        SetText(l.Text.Split('=')[0] + "= " + Loads[id].sensor.Value.ToString(), l);
+                        break;
+                    case display.Max:
+                        SetText(l.Text.Split('=')[0] + "= " + Loads[id].sensor.Max.ToString(), l);
+                        break;
+                    case display.Min:
+                        SetText(l.Text.Split('=')[0] + "= " + Loads[id].sensor.Min.ToString(), l);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            foreach (Label l in Frequency.Controls)
+            {
+                int id = 0;
+                while (Frequencies[id].label != l) id++;
+                Frequencies[id].sensor.Hardware.Update();
+                switch (Frequencies[id].disp)
+                {
+                    case display.Current:
+                        SetText(l.Text.Split('=')[0] + "= " + Frequencies[id].sensor.Value.ToString(), l);
+                        break;
+                    case display.Max:
+                        SetText(l.Text.Split('=')[0] + "= " + Frequencies[id].sensor.Max.ToString(), l);
+                        break;
+                    case display.Min:
+                        SetText(l.Text.Split('=')[0] + "= " + Frequencies[id].sensor.Min.ToString(), l);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            foreach (Label l in RPM.Controls)
+            {
+                int id = 0;
+                while (RPMs[id].label != l) id++;
+                RPMs[id].sensor.Hardware.Update();
+                switch (RPMs[id].disp)
+                {
+                    case display.Current:
+                        SetText(l.Text.Split('=')[0] + "= " + RPMs[id].sensor.Value.ToString(), l);
+                        break;
+                    case display.Max:
+                        SetText(l.Text.Split('=')[0] + "= " + RPMs[id].sensor.Max.ToString(), l);
+                        break;
+                    case display.Min:
+                        SetText(l.Text.Split('=')[0] + "= " + RPMs[id].sensor.Min.ToString(), l);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            foreach (Label l in Due.Controls)
+            {
+                int id = 0;
+                while (DueSen[id].label != l) id++;
+                switch (DueSen[id].disp)
+                {
+                    case display.Current:
+                        SetText(l.Text.Split('=')[0] + "= " + DueSen[id].current.ToString(), l);
+                        break;
+                    case display.Max:
+                        SetText(l.Text.Split('=')[0] + "= " + DueSen[id].max.ToString(), l);
+                        break;
+                    case display.Min:
+                        SetText(l.Text.Split('=')[0] + "= " + DueSen[id].min.ToString(), l);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AboutBox1 about = new AboutBox1();
+            about.ShowDialog();
+        }
+
+        private void configurationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Configuration config = new Configuration(ref thisPC, ref serial);
+            config.Show();
+            config.FormClosed += config_FormClosed;
+        }
+
+        void config_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            init();
+        }
+
+        private void measureToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Measure m = new Measure(serial);
+            serial.Close();
+            m.ShowDialog();
         }
     }
 }

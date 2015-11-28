@@ -12,3 +12,15 @@ C:\Users\Fefe\Documents\Visual Studio 2013\Projects\ArduinoFanControl\ArduinoFan
 C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\bin\Release\ArduinoFanControl.exe.config
 C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.exe
 C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.pdb
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\bin\Release\config.ini
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\bin\Release\profiles.ini
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\bin\Release\ArduinoFanControl.exe
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\bin\Release\ArduinoFanControl.pdb
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\bin\Release\OpenHardwareMonitorLib.dll
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.csprojResolveAssemblyReference.cache
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.AboutBox1.resources
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.Configuration.resources
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.ArduinoController.resources
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.Properties.Resources.resources
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.csproj.GenerateResource.Cache
+C:\Users\Fefe\Documents\GitHub\ArduinoFanControl\ArduinoFanControl\obj\Release\ArduinoFanControl.Measure.resources
