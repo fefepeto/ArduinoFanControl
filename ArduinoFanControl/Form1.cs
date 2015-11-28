@@ -694,9 +694,16 @@ namespace ArduinoFanControl
 
         private void measureToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Measure m = new Measure(serial);
-            serial.Close();
-            m.ShowDialog();
+            if (serial != null)
+            {
+                Measure m = new Measure(serial);
+                serial.Close();
+                m.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("No serial port connected.", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning );
+            }
         }
     }
 }
