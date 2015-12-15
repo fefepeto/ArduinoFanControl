@@ -70,6 +70,12 @@
     <Compile Include="AboutBox1.Designer.cs">
       <DependentUpon>AboutBox1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Com_change.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Com_change.Designer.cs">
+      <DependentUpon>Com_change.cs</DependentUpon>
+    </Compile>
     <Compile Include="Configuration.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -88,10 +94,19 @@
     <Compile Include="Measure.Designer.cs">
       <DependentUpon>Measure.cs</DependentUpon>
     </Compile>
+    <Compile Include="Profile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Profile.Designer.cs">
+      <DependentUpon>Profile.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Com_change.resx">
+      <DependentUpon>Com_change.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Configuration.resx">
       <DependentUpon>Configuration.cs</DependentUpon>
@@ -101,6 +116,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Measure.resx">
       <DependentUpon>Measure.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Profile.resx">
+      <DependentUpon>Profile.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

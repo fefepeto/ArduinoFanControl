@@ -40,13 +40,14 @@
             // 
             this.table.AutoScroll = true;
             this.table.AutoSize = true;
-            this.table.ColumnCount = 3;
-            this.table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 85F));
-            this.table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.5F));
-            this.table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.5F));
+            this.table.ColumnCount = 4;
+            this.table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 77.72277F));
+            this.table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.425743F));
+            this.table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.425743F));
+            this.table.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 7.425743F));
             this.table.Controls.Add(this.label1, 0, 0);
-            this.table.Controls.Add(this.label2, 1, 0);
-            this.table.Controls.Add(this.label3, 2, 0);
+            this.table.Controls.Add(this.label3, 3, 0);
+            this.table.Controls.Add(this.label2, 2, 0);
             this.table.Location = new System.Drawing.Point(13, 13);
             this.table.MaximumSize = new System.Drawing.Size(567, 565);
             this.table.Name = "table";
@@ -68,7 +69,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(448, 0);
+            this.label2.Location = new System.Drawing.Point(463, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(29, 13);
             this.label2.TabIndex = 1;
@@ -77,7 +78,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(487, 0);
+            this.label3.Location = new System.Drawing.Point(503, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(25, 13);
             this.label3.TabIndex = 2;

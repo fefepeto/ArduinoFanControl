@@ -48,6 +48,8 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.DispTip = new System.Windows.Forms.ToolTip(this.components);
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -157,7 +159,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             // 
             // fanToolsToolStripMenuItem
@@ -182,6 +184,7 @@
             this.profileSetupToolStripMenuItem.Name = "profileSetupToolStripMenuItem";
             this.profileSetupToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.profileSetupToolStripMenuItem.Text = "Profile Setup";
+            this.profileSetupToolStripMenuItem.Click += new System.EventHandler(this.profileSetupToolStripMenuItem_Click);
             // 
             // configurationToolStripMenuItem
             // 
@@ -202,15 +205,25 @@
             // helpToolStripMenuItem1
             // 
             this.helpToolStripMenuItem1.Name = "helpToolStripMenuItem1";
-            this.helpToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.helpToolStripMenuItem1.Size = new System.Drawing.Size(107, 22);
             this.helpToolStripMenuItem1.Text = "Help";
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // DispTip
+            // 
+            this.DispTip.AutomaticDelay = 250;
+            this.DispTip.ToolTipTitle = "Displayed Value";
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
             // ArduinoController
             // 
@@ -228,9 +241,11 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
+            this.MaximizeBox = false;
             this.Name = "ArduinoController";
             this.Text = "ArduinoDue";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Resize += new System.EventHandler(this.ArduinoController_Resize);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -259,6 +274,8 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem configurationToolStripMenuItem;
+        private System.Windows.Forms.ToolTip DispTip;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
     }
 }
 

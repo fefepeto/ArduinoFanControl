@@ -21,6 +21,17 @@ namespace ArduinoFanControl
             public short df;
         }
 
+        public struct result
+        {
+            public int id;
+            public short starting_df;
+            public int minimal_RPM;
+            public int maximal_RPM;
+            public bool PWM_capable;
+        }
+
+        public result res;
+
         public Data current;
         int maxRPM;
         Graphics baseGraph;
@@ -29,6 +40,7 @@ namespace ArduinoFanControl
         List<Point> drawing = new List<Point>();
 
         delegate void SetTextCallback(string text, Label l);
+        delegate void SetEnableCallback(bool enable, Button b);
 
         public void SetText(string text, Label l)
         {
@@ -40,6 +52,19 @@ namespace ArduinoFanControl
             else
             {
                 l.Text = text;
+            }
+        }
+
+        public void SetEnable(bool enable, Button b)
+        {
+            if (b.InvokeRequired)
+            {
+                SetEnableCallback d = new ArduinoFanControl.Measure.SetEnableCallback(SetEnable);
+                this.Invoke(d, new object[] { enable, b });
+            }
+            else
+            {
+                b.Enabled = enable;
             }
         }
 
@@ -77,6 +102,11 @@ namespace ArduinoFanControl
                 if (current.RPM > 0) dp = new Point(current.df * 3, (current.RPM * 500) / maxRPM);
                 else dp = new Point(current.df * 3, 0);
                 drawing.Add(dp);
+                if (current.RPM > 0 && drawing[drawing.Count-1].Y == 500 && res.minimal_RPM == 0)
+                {
+                    res.minimal_RPM = current.RPM;
+                    res.starting_df = current.df;
+                }
                 for (int i = 0; i < drawing.Count; i++)
                 {
                     Point tmp = drawing[i];
@@ -84,13 +114,22 @@ namespace ArduinoFanControl
                     else tmp.Y = 500;
                     drawing[i] = tmp;
                 }
-                Paint(Graph.CreateGraphics(), ref drawing);
+                Painted(Graph.CreateGraphics(), ref drawing);
+            }
+            if (input.Split(' ')[0] == "210")
+            {
+                SetEnable(true, OK);
+                SetEnable(false, MeasureButton);
+                res.maximal_RPM = current.RPM;
+                res.PWM_capable = PWMc.Checked;
+                res.id = int.Parse(Channel.SelectedItem.ToString());
             }
         }
 
         private void MeasureButton_Click(object sender, EventArgs e)
         {
-            if (PWMc.Checked) port.WriteLine("M"+Channel.SelectedIndex.ToString()+"1");
+            if (!port.IsOpen) port.Open();
+            if (PWMc.Checked) port.WriteLine("M" + Channel.SelectedIndex.ToString() + "1");
             else port.WriteLine("M" + Channel.SelectedIndex.ToString() + "0");
             MeasureButton.Enabled = false;
             port.DataReceived += port_DataReceived;
@@ -101,10 +140,19 @@ namespace ArduinoFanControl
             Graph_Paint(sender, new PaintEventArgs(Graph.CreateGraphics(), new Rectangle(0, 0, Graph.Width, Graph.Height)));
             baseGraph = Graph.CreateGraphics();
 
-            if (!port.IsOpen) port.Open();
+            while (port.IsOpen) ;
+            try
+            {
+                port.Open();
+            }
+            catch
+            {
+                System.Threading.Thread.Sleep(500);
+                port.Open();
+            }
         }
 
-        private void Paint(Graphics gr, ref List<Point> point)
+        private void Painted(Graphics gr, ref List<Point> point)
         {
             Graphics graph = gr;
             graph.Clear(SystemColors.Window);
@@ -143,6 +191,14 @@ namespace ArduinoFanControl
             {
                 g.DrawLine(p, 0, x * 50, 631, x * 50);
             }
+        }
+
+        private void OK_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            port.Close();
+            System.Threading.Thread.Sleep(3000);
+            this.Close();
         }
     }
 }

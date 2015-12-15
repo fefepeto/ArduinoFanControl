@@ -10,29 +10,50 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenHardwareMonitor.Hardware;
+using System.IO;
 
 namespace ArduinoFanControl
 {
     public partial class ArduinoController : Form
     {
         public Computer thisPC;
-        SerialPort serial;
-        string input = "";
+        public SerialPort serial = new SerialPort();
         List<Configuration.fileStructure> fs;
+        public string recieved;
+        private System.Windows.Forms.NotifyIcon icon;
+        string Name;
+        bool transferFinished;
+        int ends = 0;
+
+        static Measure m;
+
+        public enum mode { B, C, M, P, I, H, R, D };
+
+        public struct serialCom
+        {
+            public mode m;
+            public string[] args;
+        }
+
+        public serialCom command = new serialCom();
+
+        Measure.result[] res = new Measure.result[6];
+
         public enum display
         {
             Current,
             Max,
             Min
-        };
+        }
         public struct sensorData
         {
             public ISensor sensor;
             public Label label;
             public display disp;
-        };
+            public int CId;
+        }
 
-        struct DueSensors
+        public struct DueSensors
         {
             public string Name;
             public float current;
@@ -40,7 +61,7 @@ namespace ArduinoFanControl
             public float min;
             public Label label;
             public display disp;
-        };
+        }
 
         DueSensors[] dueTemp = new DueSensors[4];
         DueSensors[] dueFan = new DueSensors[6];
@@ -53,7 +74,7 @@ namespace ArduinoFanControl
         List<DueSensors> DueSen = new List<DueSensors>();
 
         delegate void SetTextCallback(string text, Label l);
-
+        
         public void SetText(string text, Label l)
         {
             if (l.InvokeRequired)
@@ -66,13 +87,14 @@ namespace ArduinoFanControl
                 l.Text = text;
             }
         }
-
+        
         public int searchIndex(string Name, List<Configuration.fileStructure> files)
         {
             int id = 0;
             if (files.Count > 0)
             {
-                while (files[id].Name != Name && id < files.Count) id++;
+                while (id < files.Count) if (files[id].Name != Name) id++;
+                    else break;
             }
             if (id < files.Count) return id;
             else return 255;
@@ -93,18 +115,29 @@ namespace ArduinoFanControl
                 case SensorType.Temperature:
                     current.label = new Label();
                     current.label.Name = current.sensor.SensorType.ToString() + (Temperatures.Count).ToString();
-                    if (idx < 255) current.label.Text = fs[idx].Alias;
-                    else current.label.Text = current.sensor.Name;
+                    if (idx < 255)
+                    {
+                        current.label.Text = fs[idx].Alias;
+                        current.CId = fs[idx].CId - 1;
+                    }
+                    else
+                    {
+                        current.label.Text = current.sensor.Name;
+                        if (Temperatures.Count < 5) current.CId = Temperatures.Count;
+                    }
                     switch (current.disp)
                     {
                         case display.Current:
                             current.label.Text += " = " + current.sensor.Value.ToString();
+                            DispTip.SetToolTip(current.label, "Current");
                             break;
                         case display.Max:
                             current.label.Text += " = " + current.sensor.Max.ToString();
+                            DispTip.SetToolTip(current.label, "Maximum");
                             break;
                         case display.Min:
                             current.label.Text += " = " + current.sensor.Min.ToString();
+                            DispTip.SetToolTip(current.label, "Minimum");
                             break;
                         default:
                             break;
@@ -125,12 +158,15 @@ namespace ArduinoFanControl
                     {
                         case display.Current:
                             current.label.Text += " = " + current.sensor.Value.ToString();
+                            DispTip.SetToolTip(current.label, "Current");
                             break;
                         case display.Max:
                             current.label.Text += " = " + current.sensor.Max.ToString();
+                            DispTip.SetToolTip(current.label, "Maximum");
                             break;
                         case display.Min:
                             current.label.Text += " = " + current.sensor.Min.ToString();
+                            DispTip.SetToolTip(current.label, "Minimum");
                             break;
                         default:
                             break;
@@ -151,12 +187,15 @@ namespace ArduinoFanControl
                     {
                         case display.Current:
                             current.label.Text += " = " + current.sensor.Value.ToString();
+                            DispTip.SetToolTip(current.label, "Current");
                             break;
                         case display.Max:
                             current.label.Text += " = " + current.sensor.Max.ToString();
+                            DispTip.SetToolTip(current.label, "Maximum");
                             break;
                         case display.Min:
                             current.label.Text += " = " + current.sensor.Min.ToString();
+                            DispTip.SetToolTip(current.label, "Minimum");
                             break;
                         default:
                             break;
@@ -177,12 +216,15 @@ namespace ArduinoFanControl
                     {
                         case display.Current:
                             current.label.Text += " = " + current.sensor.Value.ToString();
+                            DispTip.SetToolTip(current.label, "Current");
                             break;
                         case display.Max:
                             current.label.Text += " = " + current.sensor.Max.ToString();
+                            DispTip.SetToolTip(current.label, "Maximum");
                             break;
                         case display.Min:
                             current.label.Text += " = " + current.sensor.Min.ToString();
+                            DispTip.SetToolTip(current.label, "Minimum");
                             break;
                         default:
                             break;
@@ -203,12 +245,15 @@ namespace ArduinoFanControl
                     {
                         case display.Current:
                             current.label.Text += " = " + current.sensor.Value.ToString();
+                            DispTip.SetToolTip(current.label, "Current");
                             break;
                         case display.Max:
                             current.label.Text += " = " + current.sensor.Max.ToString();
+                            DispTip.SetToolTip(current.label, "Maximum");
                             break;
                         case display.Min:
                             current.label.Text += " = " + current.sensor.Min.ToString();
+                            DispTip.SetToolTip(current.label, "Minimum");
                             break;
                         default:
                             break;
@@ -247,7 +292,7 @@ namespace ArduinoFanControl
             {
                 if (red.Split('=')[0].TrimEnd(' ') == "LastUsedPort")
                 {
-                    if (red.Split('=')[1].TrimStart(' ').StartsWith("COM")) serial.PortName = red.Split('=')[1].TrimStart(' ');
+                    if (red.Split('=')[1].TrimStart(' ').StartsWith("COM")) if (!serial.IsOpen) serial.PortName = red.Split('=')[1].TrimStart(' ');
                 }
                 else
                 {
@@ -256,10 +301,12 @@ namespace ArduinoFanControl
                     curr = curr.TrimEnd(' ');
                     cfs.Name = curr;
                     red = red.Split('=')[1].TrimStart(' ');
-                    curr = red.Split(' ')[0];
+                    curr = red.Split(',')[0];
                     cfs.Alias = curr;
-                    cfs.hide = red.Split(' ')[1] == "true";
-                    cfs.log = red.Split(' ')[2] == "true";
+                    cfs.hide = red.Split(',')[1] == "true";
+                    cfs.log = red.Split(',')[2] == "true";
+                    if (red.Split(',').Length == 4) cfs.CId = int.Parse(red.Split(',')[3]);
+                    else cfs.CId = -1;
                     fs.Add(cfs);
                 }
                 red = sr.ReadLine();
@@ -275,9 +322,16 @@ namespace ArduinoFanControl
                     {
                         sensorData current = new sensorData();
                         current.sensor = sensor;
-                        idx = searchIndex(sensor.Name, fs);
-                        if (idx < 255) { if (!fs[idx].hide) ListSensors(ref current, idx); }
-                        else ListSensors(ref current, idx);
+                        if (sensor.SensorType == SensorType.Clock || sensor.SensorType == SensorType.Fan || sensor.SensorType == SensorType.Load || sensor.SensorType == SensorType.Temperature || sensor.SensorType == SensorType.Voltage)
+                        {
+                            idx = searchIndex(sensor.Name, fs);
+                            if (idx < 255)
+                            {
+                                current.CId = fs[idx].CId;
+                                if (!fs[idx].hide) ListSensors(ref current, idx);
+                            }
+                            else ListSensors(ref current, idx);
+                        }
                     }
                 }
 
@@ -285,9 +339,16 @@ namespace ArduinoFanControl
                 {
                     sensorData current = new sensorData();
                     current.sensor = sensor;
-                    idx = searchIndex(sensor.Name, fs);
-                    if (idx < 255) { if (!fs[idx].hide) ListSensors(ref current, idx); }
-                    else ListSensors(ref current, idx);
+                    if (sensor.SensorType == SensorType.Clock || sensor.SensorType == SensorType.Fan || sensor.SensorType == SensorType.Load || sensor.SensorType == SensorType.Temperature || sensor.SensorType == SensorType.Voltage)
+                    {
+                        idx = searchIndex(sensor.Name, fs);
+                        if (idx < 255)
+                        {
+                            if (!fs[idx].hide) ListSensors(ref current, idx);
+                            if (fs[idx].CId != 0) current.CId = fs[idx].CId;
+                        }
+                        else ListSensors(ref current, idx);
+                    }
                 }
             }
             for (int i = 0; i < 4; i++)
@@ -309,12 +370,15 @@ namespace ArduinoFanControl
                         {
                             case display.Current:
                                 current.label.Text += " = " + dueTemp[i].current.ToString();
+                                DispTip.SetToolTip(current.label, "Current");
                                 break;
                             case display.Max:
                                 current.label.Text += " = " + dueTemp[i].max.ToString();
+                                DispTip.SetToolTip(current.label, "Maximum");
                                 break;
                             case display.Min:
                                 current.label.Text += " = " + dueTemp[i].min.ToString();
+                                DispTip.SetToolTip(current.label, "Minimum");
                                 break;
                             default:
                                 break;
@@ -324,6 +388,7 @@ namespace ArduinoFanControl
                         current.label.Click += label_Click;
                         this.Due.Controls.Add(current.label);
                         DueSen.Add(current);
+                        dueTemp[i].label = current.label;
                     }
                 }
                 else
@@ -340,12 +405,15 @@ namespace ArduinoFanControl
                     {
                         case display.Current:
                             current.label.Text += " = " + dueTemp[i].current.ToString();
+                            DispTip.SetToolTip(current.label, "Current");
                             break;
                         case display.Max:
                             current.label.Text += " = " + dueTemp[i].max.ToString();
+                            DispTip.SetToolTip(current.label, "Maximum");
                             break;
                         case display.Min:
                             current.label.Text += " = " + dueTemp[i].min.ToString();
+                            DispTip.SetToolTip(current.label, "Minimum");
                             break;
                         default:
                             break;
@@ -355,11 +423,12 @@ namespace ArduinoFanControl
                     current.label.Click += label_Click;
                     this.Due.Controls.Add(current.label);
                     DueSen.Add(current);
+                    dueTemp[i].label = current.label;
                 }
             }
             for (int i = 0; i < 6; i++)
             {
-                idx = searchIndex("DueTemperature" + (i + 1).ToString(), fs);
+                idx = searchIndex("DueFan" + (i + 1).ToString(), fs);
                 if (idx < 255)
                 {
                     if (!fs[idx].hide)
@@ -376,12 +445,15 @@ namespace ArduinoFanControl
                         {
                             case display.Current:
                                 current.label.Text += " = " + dueFan[i].current.ToString();
+                                DispTip.SetToolTip(current.label, "Current");
                                 break;
                             case display.Max:
                                 current.label.Text += " = " + dueFan[i].max.ToString();
+                                DispTip.SetToolTip(current.label, "Maximum");
                                 break;
                             case display.Min:
                                 current.label.Text += " = " + dueFan[i].min.ToString();
+                                DispTip.SetToolTip(current.label, "Minimum");
                                 break;
                             default:
                                 break;
@@ -391,6 +463,7 @@ namespace ArduinoFanControl
                         current.label.Click += label_Click;
                         this.Due.Controls.Add(current.label);
                         DueSen.Add(current);
+                        dueFan[i].label = current.label;
                     }
                 }
                 else
@@ -403,27 +476,32 @@ namespace ArduinoFanControl
                     if (idx < 255) current.label.Text = fs[idx].Alias;
                     else current.label.Text = "DueFan" + (i + 1).ToString();
                     current.disp = display.Current;
-                    switch (current.disp)
-                    {
-                        case display.Current:
-                            current.label.Text += " = " + dueFan[i].current.ToString();
-                            break;
-                        case display.Max:
-                            current.label.Text += " = " + dueFan[i].max.ToString();
-                            break;
-                        case display.Min:
-                            current.label.Text += " = " + dueFan[i].min.ToString();
-                            break;
-                        default:
-                            break;
-                    }
+                        switch (current.disp)
+                        {
+                            case display.Current:
+                                current.label.Text += " = " + dueFan[i].current.ToString();
+                                DispTip.SetToolTip(current.label, "Current");
+                                break;
+                            case display.Max:
+                                current.label.Text += " = " + dueFan[i].max.ToString();
+                                DispTip.SetToolTip(current.label, "Maximum");
+                                break;
+                            case display.Min:
+                                current.label.Text += " = " + dueFan[i].min.ToString();
+                                DispTip.SetToolTip(current.label, "Minimum");
+                                break;
+                            default:
+                                break;
+                        }
                     current.label.AutoSize = true;
                     current.label.Location = new System.Drawing.Point(6, 16 + Due.Controls.Count * 13);
                     current.label.Click += label_Click;
                     this.Due.Controls.Add(current.label);
                     DueSen.Add(current);
+                    dueFan[i].label = current.label;
                 }
             }
+            sr.Close();
         }
 
         public ArduinoController()
@@ -441,44 +519,128 @@ namespace ArduinoFanControl
             thisPC.RAMEnabled = true;
             thisPC.Open();
 
+            icon = new NotifyIcon(this.components);
+
+            icon.Icon = new System.Drawing.Icon(this.Icon, new Size(16, 16));
+            icon.Text = this.Text;
+            icon.Visible = true;
+            icon.Click += icon_Click;
+
             string[] ports = SerialPort.GetPortNames();
             foreach (string s in ports) COM_p.Items.Add(s);
             init();
             timer1.Start();
+
+            command.m = mode.C;
+            string[] array = { "0 ", "0 ", "0 ", "0 ", "0 " };
+            command.args = array;
         }
 
-        private void COM_p_SelectedIndexChanged(object sender, EventArgs e)
+        void icon_Click(object sender, EventArgs e)
         {
-            COM_p.Enabled = false;
-            serial = new SerialPort(COM_p.SelectedItem.ToString(), 38400);
+            if (this.WindowState == FormWindowState.Minimized) this.WindowState = FormWindowState.Normal;
+            this.ShowInTaskbar = true;
+            this.Activate();
+        }
+
+        void COM_init(string Name)
+        {
+            serial = new SerialPort(Name, 115200);
             serial.Parity = Parity.None;
             serial.StopBits = StopBits.One;
             serial.DataBits = 8;
             serial.Handshake = Handshake.None;
             serial.RtsEnable = true;
             serial.DtrEnable = true;
-            serial.DataReceived += new SerialDataReceivedEventHandler(serial_DataReceived);
-            serial.ReadTimeout = 500;
-            serial.WriteTimeout = 500;
-            if (!serial.IsOpen) serial.Open();
+            serial.ReadTimeout = 1000;
+            serial.WriteTimeout = 1000;
+            serial.DataReceived += serial_DataReceived;
+            while (serial.IsOpen) ;
+            try
+            {
+                System.Threading.Thread.Sleep(200);
+                serial.Open();
+            }
+            catch
+            {
+                while (!serial.IsOpen)
+                {
+                    System.Threading.Thread.Sleep(200);
+                    string[] ports = SerialPort.GetPortNames();
+                    foreach (string s in ports) if (s == Name) serial.Open();
+                }
+            }
+        }
+
+        private void COM_p_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Name = COM_p.SelectedItem.ToString();
+            COM_init(Name);
             COM_p.Enabled = false;
         }
 
-        void serial_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void serial_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            SerialPort port = (SerialPort)sender;
-            input = port.ReadLine();
-            string[] inp = input.Split(' ');
-            for (int i = 0; i < inp.Length; i++)
+            transferFinished = false;
+            if (!serial.IsOpen) serial.Open();
+            try
             {
-                float current = float.Parse(inp[i]);
-                DueSensors ds = new DueSensors();
-                ds = DueSen[i];
-                ds.current = current;
-                if (current > ds.max) ds.max = current;
-                if (current < ds.min) ds.min = current;
-                DueSen[i] = ds;
+                recieved = serial.ReadLine();
+                if (recieved.Split(' ').Length == 10)
+                {
+                    string[] inp = recieved.Split(' ');
+                    for (int i = 0; i < inp.Length; i++)
+                    {
+                        float current = float.Parse(inp[i]);
+                        DueSensors ds = new DueSensors();
+                        ds = DueSen[i];
+                        ds.current = current;
+                        if (current > ds.max) ds.max = current;
+                        if (current < ds.min) ds.min = current;
+                        DueSen[i] = ds;
+                    }
+                }
             }
+            catch
+            {
+                if (serial.IsOpen) serial.DiscardInBuffer();
+            }
+            switch (command.m)
+            {
+                case mode.C:
+                    try
+                    {
+                        serial.Write("C ");
+                    }
+                    catch
+                    {
+                    }
+                    for (int id = 0; id < command.args.Length; id++)
+                    {
+                        try
+                        {
+                            if (command.args[id] != null) serial.Write(command.args[id] + " ");
+                            else serial.Write("0 ");
+                        }
+                        catch
+                        {
+                        }
+                    }
+                    break;
+                case mode.D:
+                    serial.Write("D");
+                    serial.Close();
+                    break;
+                case mode.P:
+                    serial.Write("P");
+                    serial.DiscardInBuffer();
+                    serial.Close();
+                    break;
+                case mode.M:
+                default:
+                    break;
+            }
+            transferFinished = true;
         }
 
         void label_Click(object sender, EventArgs e)
@@ -491,56 +653,154 @@ namespace ArduinoFanControl
             switch (tmp[0])
             {
                 case 'L':
-                    tmp.TrimStart(SensorType.Load.ToString().ToCharArray());
+                    tmp = tmp.TrimStart(SensorType.Load.ToString().ToCharArray());
                     idx = int.Parse(tmp);
                     aux = Loads[idx];
-                    aux.disp = aux.disp + 1;
+                    switch (aux.disp)
+                    {
+                        case display.Current:
+                            aux.disp = display.Max;
+                            DispTip.SetToolTip(l, "Maximum");
+                            break;
+                        case display.Max:
+                            aux.disp = display.Min;
+                            DispTip.SetToolTip(l, "Minimum");
+                            break;
+                        case display.Min:
+                            aux.disp = display.Current;
+                            DispTip.SetToolTip(l, "Current");
+                            break;
+                    }
                     Loads[idx] = aux;
                     break;
                 case 'F':
-                    tmp.TrimStart(SensorType.Fan.ToString().ToCharArray());
+                    tmp = tmp.TrimStart(SensorType.Fan.ToString().ToCharArray());
                     idx = int.Parse(tmp);
                     aux = RPMs[idx];
-                    aux.disp = aux.disp + 1;
+                    switch (aux.disp)
+                    {
+                        case display.Current:
+                            aux.disp = display.Max;
+                            DispTip.SetToolTip(l, "Maximum");
+                            break;
+                        case display.Max:
+                            aux.disp = display.Min;
+                            DispTip.SetToolTip(l, "Minimum");
+                            break;
+                        case display.Min:
+                            aux.disp = display.Current;
+                            DispTip.SetToolTip(l, "Current");
+                            break;
+                    }
                     RPMs[idx] = aux;
                     break;
                 case 'C':
-                    tmp.TrimStart(SensorType.Clock.ToString().ToCharArray());
+                    tmp = tmp.TrimStart(SensorType.Clock.ToString().ToCharArray());
                     idx = int.Parse(tmp);
                     aux = Frequencies[idx];
-                    aux.disp = aux.disp + 1;
+                    switch (aux.disp)
+                    {
+                        case display.Current:
+                            aux.disp = display.Max;
+                            DispTip.SetToolTip(l, "Maximum");
+                            break;
+                        case display.Max:
+                            aux.disp = display.Min;
+                            DispTip.SetToolTip(l, "Minimum");
+                            break;
+                        case display.Min:
+                            aux.disp = display.Current;
+                            DispTip.SetToolTip(l, "Current");
+                            break;
+                    }
                     Frequencies[idx] = aux;
                     break;
                 case 'T':
-                    tmp.TrimStart(SensorType.Temperature.ToString().ToCharArray());
+                    tmp = tmp.TrimStart(SensorType.Temperature.ToString().ToCharArray());
                     idx = int.Parse(tmp);
                     aux = Temperatures[idx];
-                    aux.disp = aux.disp + 1;
+                    switch (aux.disp)
+                    {
+                        case display.Current:
+                            aux.disp = display.Max;
+                            DispTip.SetToolTip(l, "Maximum");
+                            break;
+                        case display.Max:
+                            aux.disp = display.Min;
+                            DispTip.SetToolTip(l, "Minimum");
+                            break;
+                        case display.Min:
+                            aux.disp = display.Current;
+                            DispTip.SetToolTip(l, "Current");
+                            break;
+                    }
                     Temperatures[idx] = aux;
                     break;
                 case 'V':
-                    tmp.TrimStart(SensorType.Voltage.ToString().ToCharArray());
+                    tmp = tmp.TrimStart(SensorType.Voltage.ToString().ToCharArray());
                     idx = int.Parse(tmp);
                     aux = Voltages[idx];
-                    aux.disp = aux.disp + 1;
+                    switch (aux.disp)
+                    {
+                        case display.Current:
+                            aux.disp = display.Max;
+                            DispTip.SetToolTip(l, "Maximum");
+                            break;
+                        case display.Max:
+                            aux.disp = display.Min;
+                            DispTip.SetToolTip(l, "Minimum");
+                            break;
+                        case display.Min:
+                            aux.disp = display.Current;
+                            DispTip.SetToolTip(l, "Current");
+                            break;
+                    }
                     Voltages[idx] = aux;
                     break;
                 case 'D':
                     switch (tmp[3])
                     {
                         case 'F':
-                            tmp.TrimStart("DueFan".ToCharArray());
-                            idx = int.Parse(tmp);
+                            tmp = tmp.TrimStart("DueFan".ToCharArray());
+                            idx = int.Parse(tmp) - 1;
                             aux2 = DueSen[idx + 4];
-                            aux.disp = aux2.disp + 1;
+                            switch (aux2.disp)
+                            {
+                                case display.Current:
+                                    aux2.disp = display.Max;
+                                    DispTip.SetToolTip(l, "Maximum");
+                                    break;
+                                case display.Max:
+                                    aux2.disp = display.Min;
+                                    DispTip.SetToolTip(l, "Minimum");
+                                    break;
+                                case display.Min:
+                                    aux2.disp = display.Current;
+                                    DispTip.SetToolTip(l, "Current");
+                                    break;
+                            }
                             DueSen[idx + 4] = aux2;
                             break;
                         case 'T':
-                            tmp.TrimStart("DueTemperature".ToCharArray());
-                            idx = int.Parse(tmp);
-                            aux2 = DueSen[idx + 4];
-                            aux.disp = aux2.disp + 1;
-                            DueSen[idx + 4] = aux2;
+                            tmp = tmp.TrimStart("DueTemperature".ToCharArray());
+                            idx = int.Parse(tmp) - 1;
+                            aux2 = DueSen[idx];
+                            switch (aux2.disp)
+                            {
+                                case display.Current:
+                                    aux2.disp = display.Max;
+                                    DispTip.SetToolTip(l, "Maximum");
+                                    break;
+                                case display.Max:
+                                    aux2.disp = display.Min;
+                                    DispTip.SetToolTip(l, "Minimum");
+                                    break;
+                                case display.Min:
+                                    aux2.disp = display.Current;
+                                    DispTip.SetToolTip(l, "Current");
+                                    break;
+                            }
+                            DueSen[idx] = aux2;
                             break;
                         default:
                             break;
@@ -564,7 +824,7 @@ namespace ArduinoFanControl
                         SetText(l.Text.Split('=')[0] + "= " + Temperatures[id].sensor.Value.ToString(), l);
                         break;
                     case display.Max:
-                       SetText(l.Text.Split('=')[0] + "= " + Temperatures[id].sensor.Max.ToString(), l);
+                        SetText(l.Text.Split('=')[0] + "= " + Temperatures[id].sensor.Max.ToString(), l);
                         break;
                     case display.Min:
                         SetText(l.Text.Split('=')[0] + "= " + Temperatures[id].sensor.Min.ToString(), l);
@@ -593,7 +853,7 @@ namespace ArduinoFanControl
                         break;
                 }
             }
-            foreach (Label l in  LoadGB.Controls)
+            foreach (Label l in LoadGB.Controls)
             {
                 int id = 0;
                 while (Loads[id].label != l) id++;
@@ -672,6 +932,13 @@ namespace ArduinoFanControl
                         break;
                 }
             }
+            string[] temps = new string[5];
+            for (int id = 0; id < Temperatures.Count; id++) if (Temperatures[id].CId > -1) temps[Temperatures[id].CId] = Temperatures[id].sensor.Value.ToString();
+            if (command.m != mode.B || ends >= 6)
+            {
+                command.m = mode.C;
+                command.args = temps;
+            }
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -694,9 +961,44 @@ namespace ArduinoFanControl
 
         private void measureToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Measure m = new Measure(serial);
-            serial.Close();
+            command.m = mode.D;
+            System.Threading.Thread.Sleep(4000);
+            m = new Measure(serial);
             m.ShowDialog();
+            if (m.DialogResult == System.Windows.Forms.DialogResult.OK)
+            {
+                res[m.res.id - 1] = m.res;
+                if (!serial.IsOpen) serial.Open();
+            }
+        }
+
+        private void profileSetupToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //command.m = mode.P;
+            serial.Close();
+            System.Threading.Thread.Sleep(3000);
+            Profile prof = new Profile(ref Temperatures, ref dueTemp, ref dueFan, serial, res);
+            prof.Show();
+            prof.FormClosed += prof_FormClosed;
+        }
+
+        void prof_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            while (serial.IsOpen) ;
+            try
+            {
+                serial.Open();
+            }
+            catch
+            {
+                System.Threading.Thread.Sleep(500);
+                serial.Open();
+            }
+        }
+
+        private void ArduinoController_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState == FormWindowState.Minimized) this.ShowInTaskbar = false;
         }
     }
 }
